@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Trello Clone</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/stylesheets/home.css">
+    </head>
+    <body>
+        <div class="empty">
+            <div class="fill" draggable="true"> 
+            </div>
+        </div>
+        <div class="empty">
+        </div>
+        <div class="empty">
+        </div>
+        <div class="empty">
+        </div>
+        <div class="empty">
+        </div>
+        <script async>
+            const fill = document.querySelector(".fill");
+            const empty = document.querySelectorAll(".empty");
+            fill.addEventListener("dragstart", dragStart);
+            fill.addEventListener("dragend", dragEnd);
+            
+            function dragStart() {
+                console.log("start");
+                // this.className += " hold";
+                setTimeout(() => {
+                    (this.className = "invisible")
+                }, 0);
+                
+            }
+            
+            function dragEnd() {
+                console.log("end");
+            }
+            
+
+        </script>
+    </body>
+</html>
