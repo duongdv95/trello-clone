@@ -2,21 +2,32 @@ body {
     background-color: #d9e7fc;
 }
 
-.fill {
-    background-image: url("https://source.unsplash.com/random/150x150");
-    position: relative;
-    height: 150px;
-    width: 150px;
-    top: 5px;
-    left: 5px;
-    cursor: pointer;
+h1 {
+    text-align: center;
 }
 
 .empty {
+    vertical-align: top;
     display: inline-block;
-    height: 160px;
+    height: 300px;
     width: 160px;
-    border-style: dashed;
+    border-style: solid;
+    border-width: thin;
     margin: 10px;
     background-color: white;
 }
+
+.hold {
+    border: solid #ccc 4px;
+}
+
+.hovered {
+    background: #f4f4f4;
+    border-style: dashed;
+}
+
+.invisible {
+    display: none;
+}
+
+
