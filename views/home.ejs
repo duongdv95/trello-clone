@@ -14,91 +14,15 @@
             </form>
         </div>
         <div id="list-container">
-
-            <div class="empty">
-                <div class="fill" draggable="true"> 
-                thing 1
-                </div>
-                <div class="fill" draggable="true"> 
-                thing 2
-                </div>
-                <div class="fill" draggable="true"> 
-                thing 3
-                </div>
-            </div>
         </div>
 
-
-        <script async>
-            const fill = document.querySelectorAll(".fill");
-            const empties = document.querySelectorAll(".empty");
-            
-            fill.forEach(function(element) {
-                element.addEventListener("dragstart", dragStart);
-                element.addEventListener("dragend", dragEnd);
-            })
-            
-            const listContainer = document.getElementById("list-container");
-            
-            document.getElementById("list-form").addEventListener("submit", (e) => {
-                e.preventDefault();
-                var newList = document.createElement("div");
-                newList.addEventListener("dragover", dragOver);
-                newList.addEventListener("dragenter", dragEnter);
-                newList.addEventListener("dragleave", dragLeave);
-                newList.addEventListener("drop", dragDrop);
-                newList.className = "empty";
-                listContainer.appendChild(newList);
-            })
-            
-            var element = (function() {
-                var privateElement;
-                return {
-                    store: function(element) {
-                      privateElement = element;
-                    },
-                    state: function() {
-                      return privateElement;
-                    }
-                };
-            })();
-            
-            function dragStart() {
-                element.store(this);
-                this.className += " hold";
-                setTimeout(() => (this.className = "invisible"), 0);
-            }
-            
-            function dragEnd() {
-                this.className = "fill";
-            }
-            
-            function dragOver(e) {
-                e.preventDefault();
-            }
-            
-            function dragEnter(e) {
-                e.preventDefault();
-                this.className += " hovered";
-            }
-            
-            function dragLeave() {
-                this.className = "empty";
-            }
-            
-            function dragDrop() {
-                this.className = "empty";
-                var currentElementDragged = element.state();
-                this.append(currentElementDragged);
-            }
-
-        </script>
-        
-        <script id="location-message-template" type="text/template">
+        <script id="card-form-template" type="text/template">
             <form class="card-form">
                 <input name="card-list" type="text" placeholder="Add card title..." autocomplete="off"/>
-                    <button>Add Card</button>
+                <button>Add Card</button>
             </form>
         </script>
+        
+        <script type="text/javascript" src="/js/main.js"></script>
     </body>
 </html>
