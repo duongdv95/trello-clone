@@ -6,6 +6,18 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    margin: 0;
+    text-align: center;
+}
+
+.fill {
+    margin: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .empty {
     vertical-align: top;
     display: inline-block;

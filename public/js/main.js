@@ -1,33 +1,6 @@
 const cardForm = document.getElementById("card-form-template").innerHTML;
 const listContainer = document.getElementById("list-container");
-
-document.getElementById("list-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    var newList = document.createElement("div");
-    newList.insertAdjacentHTML("beforeend", cardForm);
-    newList.addEventListener("dragover", dragOver);
-    newList.addEventListener("dragenter", dragEnter);
-    newList.addEventListener("dragleave", dragLeave);
-    newList.addEventListener("drop", dragDrop);
-    newList.className = "empty";
-    listContainer.appendChild(newList);
-})
-
-document.addEventListener("submit", function(e) {
-    const listElement = e.target.parentElement;
-    e.preventDefault();
-    if(e.target && e.target.className == "card-form") {
-        var newCardText = e.target.firstElementChild.value;
-        e.target.firstElementChild.value = "";
-        var newCardElement = `<div class="card" draggable="true">${newCardText}</div>`;
-        listElement.insertAdjacentHTML("beforeend", newCardElement);
-
-        listElement.lastElementChild.addEventListener("dragstart", dragStart);
-        listElement.lastElementChild.addEventListener("dragend", dragEnd);
-    }
-})
- 
-var element = (function() {
+const element = (function() {
     var privateElement;
     return {
         store: function(element) {
@@ -38,6 +11,49 @@ var element = (function() {
         }
     };
 })();
+
+initalizeListForm();
+initializeCardForm()
+
+function initalizeListForm() {
+    document.getElementById("list-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const listTitle = e.target.firstElementChild.value;
+        if(listTitle) {
+            createList(listTitle);
+            e.target.firstElementChild.value = "";  
+        }
+    })
+}
+
+function initializeCardForm() {
+    document.addEventListener("submit", function(e) {
+        const listElement = e.target.parentElement;
+        e.preventDefault();
+        if(e.target && e.target.className == "card-form") {
+            var newCardText = e.target.firstElementChild.value;
+            if(newCardText) {
+                e.target.firstElementChild.value = "";
+                var newCardElement = `<div class="fill" draggable="true">${newCardText}<i class="fas fa-trash-alt"></i></div>`;
+                listElement.insertAdjacentHTML("beforeend", newCardElement);
+                listElement.lastElementChild.addEventListener("dragstart", dragStart);
+                listElement.lastElementChild.addEventListener("dragend", dragEnd);
+            }
+        }
+    })
+}
+
+function createList(listTitle) {
+    const newList = document.createElement("div");
+    newList.innerHTML = `<h2>${listTitle}</h2>`
+    newList.insertAdjacentHTML("beforeend", cardForm);
+    newList.addEventListener("dragover", dragOver);
+    newList.addEventListener("dragenter", dragEnter);
+    newList.addEventListener("dragleave", dragLeave);
+    newList.addEventListener("drop", dragDrop);
+    newList.className = "empty";
+    listContainer.appendChild(newList);
+}
 
 function dragStart() {
     element.store(this);
@@ -64,8 +80,7 @@ function dragLeave() {
 
 function dragDrop() {
     this.className = "empty";
-    var currentElementDragged = element.state();
-    console.log(currentElementDragged);
+    const currentElementDragged = element.state();
     this.append(currentElementDragged);
 }
 
