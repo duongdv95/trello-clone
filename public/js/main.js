@@ -1,5 +1,7 @@
 const cardForm = document.getElementById("card-form-template").innerHTML;
 const listContainer = document.getElementById("list-container");
+const deleteIcon = 'x'
+
 const element = (function() {
     var privateElement;
     return {
@@ -14,6 +16,8 @@ const element = (function() {
 
 initalizeListForm();
 initializeCardForm()
+initializeDeleteList();
+initializeDeleteCard();
 
 function initalizeListForm() {
     document.getElementById("list-form").addEventListener("submit", (e) => {
@@ -34,7 +38,7 @@ function initializeCardForm() {
             var newCardText = e.target.firstElementChild.value;
             if(newCardText) {
                 e.target.firstElementChild.value = "";
-                var newCardElement = `<div class="fill" draggable="true">${newCardText}<i class="fas fa-trash-alt"></i></div>`;
+                var newCardElement = `<div class="fill" draggable="true">${newCardText}<button class="delete-card">${deleteIcon}</button></div>`;
                 listElement.insertAdjacentHTML("beforeend", newCardElement);
                 listElement.lastElementChild.addEventListener("dragstart", dragStart);
                 listElement.lastElementChild.addEventListener("dragend", dragEnd);
@@ -43,9 +47,27 @@ function initializeCardForm() {
     })
 }
 
+function initializeDeleteList() {
+    document.addEventListener("click", function(e) {
+        if(e.target && e.target.className == "delete-list"){
+            var getList = e.target.parentElement.parentElement;
+            getList.remove();
+        }
+    })
+}
+
+function initializeDeleteCard() {
+    document.addEventListener("click", function(e) {
+        if(e.target && e.target.className == "delete-card"){
+            var getCard = e.target.parentElement;
+            getCard.remove();
+        }
+    })
+}
+
 function createList(listTitle) {
     const newList = document.createElement("div");
-    newList.innerHTML = `<h2>${listTitle}</h2>`
+    newList.innerHTML = `<div class="list-title">${listTitle}<button class="delete-list">${deleteIcon}</button></div>`
     newList.insertAdjacentHTML("beforeend", cardForm);
     newList.addEventListener("dragover", dragOver);
     newList.addEventListener("dragenter", dragEnter);

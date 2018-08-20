@@ -1,21 +1,27 @@
 body {
-    background-color: #d9e7fc;
+    background-color: #3367e0;
 }
 
 h1 {
     text-align: center;
 }
 
-h2 {
-    margin: 0;
-    text-align: center;
-}
-
-.fill {
+.list-title {
     margin: 8px;
+    text-align: left;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: 900;
+}
+
+.fill {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 5px;
+    margin: 5px 0 5px 0;
 }
 
 .empty {
@@ -26,7 +32,8 @@ h2 {
     border-style: solid;
     border-width: thin;
     margin: 10px;
-    background-color: white;
+    background-color: #d9e7fc;
+    padding: 5px;
 }
 
 .hold {
@@ -42,4 +49,6 @@ h2 {
     display: none;
 }
 
-
+#list-form {
+    padding-left: 10px;
+}
