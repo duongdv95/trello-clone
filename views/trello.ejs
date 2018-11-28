@@ -18,6 +18,17 @@
             </form>
         </div>
         <div id="list-container">
+        <% listsArray.forEach(function(element) { %>
+            <div class="empty" data-list-id=<%=element.id%>>
+                <div class="list-title"><%= element.listName %>
+                    <button class="delete-list">x</button>
+                </div>
+                <form class="card-form">
+                    <input name="card-list" type="text" placeholder="Add card title..." autocomplete="off"/>
+                    <button>Add Card</button>
+                </form>
+            </div>
+        <% }) %>
         </div>
 
         <script id="card-form-template" type="text/template">
@@ -27,6 +38,6 @@
             </form>
         </script>
         
-        <script type="text/javascript" src="/js/main.js"></script>
+        <script type="text/javascript" src="/js/trello.js"></script>
     </body>
 </html>

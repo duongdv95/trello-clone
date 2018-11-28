@@ -1,5 +1,7 @@
 const cardForm = document.getElementById("card-form-template").innerHTML;
 const listContainer = document.getElementById("list-container");
+const empty = document.getElementsByClassName("empty");
+
 const deleteIcon = 'x'
 
 const element = (function() {
@@ -35,12 +37,22 @@ initializeDeleteList();
 initializeDeleteCard();
 initializeEditCard();
 initializeUpdateCard();
+initializeRenderedLists();
+
+function initializeRenderedLists() {
+    if(empty) {
+        for(var i = 0; i < empty.length; i++) {
+            addDragProperties(empty[i]);
+        }
+    }    
+}
 
 function initalizeListForm() {
     document.getElementById("list-form").addEventListener("submit", (e) => {
         e.preventDefault();
         const listTitle = e.target.firstElementChild.value;
         if(listTitle) {
+            request("POST", "/trello", {listTitle})
             createList(listTitle);
             e.target.firstElementChild.value = "";  
         }
@@ -135,12 +147,16 @@ function createList(listTitle) {
     const newList = document.createElement("div");
     newList.innerHTML = `<div class="list-title">${listTitle}<button class="delete-list">${deleteIcon}</button></div>`
     newList.insertAdjacentHTML("beforeend", cardForm);
-    newList.addEventListener("dragover", dragOver);
-    newList.addEventListener("dragenter", dragEnter);
-    newList.addEventListener("dragleave", dragLeave);
-    newList.addEventListener("drop", dragDrop);
+    addDragProperties(newList);
     newList.className = "empty";
     listContainer.appendChild(newList);
+}
+
+function addDragProperties(element) {
+        element.addEventListener("dragover", dragOver);
+        element.addEventListener("dragenter", dragEnter);
+        element.addEventListener("dragleave", dragLeave);
+        element.addEventListener("drop", dragDrop);
 }
 
 function dragStart() {
@@ -172,5 +188,14 @@ function dragDrop() {
     this.append(currentElementDragged);
 }
 
-
+function request (type, path, data) {
+    return window.fetch(path, {
+        method: type,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    })
+}
 
