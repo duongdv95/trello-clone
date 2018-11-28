@@ -48,12 +48,14 @@ function initializeRenderedLists() {
 }
 
 function initalizeListForm() {
-    document.getElementById("list-form").addEventListener("submit", (e) => {
+    document.getElementById("list-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const listTitle = e.target.firstElementChild.value;
         if(listTitle) {
-            request("POST", "/trello", {listTitle})
-            createList(listTitle);
+            const response = await request("POST", "/trello", {listTitle})
+            const responseJSON = await response.json();
+            const listID = responseJSON.listID;
+            createList({listTitle, listID});
             e.target.firstElementChild.value = "";  
         }
     })
@@ -143,12 +145,13 @@ function initializeDeleteCard() {
     })
 }
 
-function createList(listTitle) {
+function createList({listTitle, listID}) {
     const newList = document.createElement("div");
     newList.innerHTML = `<div class="list-title">${listTitle}<button class="delete-list">${deleteIcon}</button></div>`
     newList.insertAdjacentHTML("beforeend", cardForm);
     addDragProperties(newList);
     newList.className = "empty";
+    newList.setAttribute("data-list-id", listID)
     listContainer.appendChild(newList);
 }
 

@@ -3,7 +3,8 @@ const knexfile                = require("./knexfile.js"),
     
 
 async function createList(listTitle) {
-    await knex("lists").insert({list_name: listTitle})
+    const listID = await knex("lists").insert({list_name: listTitle})
+    return listID
 }
 
 async function getLists() {

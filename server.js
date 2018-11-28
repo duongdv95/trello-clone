@@ -15,14 +15,14 @@ app.get("/", (req, res) => {
 
 app.get("/trello", async (req, res) => {
     const listsArray = await store.getLists();
-    console.log(listsArray);
     res.render("trello", {listsArray});
 })
 
-app.post("/trello", (req, res) => {
+app.post("/trello", async (req, res) => {
     const listTitle = req.body.listTitle;
-    store.createList(listTitle);
-    res.sendStatus(200);
+    const [listID] = await store.createList(listTitle);
+    // res.sendStatus(200);
+    res.status(200).send({listID})
 })
 
 app.listen(process.env.PORT, process.env.IP, function() {
