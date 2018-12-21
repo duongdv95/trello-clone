@@ -15,4 +15,9 @@ async function getLists() {
     return listObjects;
 }
 
-module.exports = {createList, getLists};
+async function deleteList(listID) {
+    const deleteStatus = await knex("lists").select("list_name").del().where({id: listID})
+    return (deleteStatus == 1) ? true : false
+}
+
+module.exports = {createList, getLists, deleteList};

@@ -119,13 +119,19 @@ function initializeUpdateCard() {
 }
 
 function initializeDeleteList() {
-    document.addEventListener("click", function(e) {
+    document.addEventListener("click", async function(e) {
         if(e.target && e.target.className == "delete-list"){
             if(editButton.state()) {
                 return
             } else {
                 var getList = e.target.parentElement.parentElement;
-                getList.remove();
+                var listID = getList.dataset.listId;
+                const response = await request("DELETE", `/trello/${listID}`, {listID})
+                const responseJSON = await response.json();
+                const deleteStatus = responseJSON.deleteStatus;
+                if (deleteStatus){
+                    getList.remove()
+                }
             }
         }
     })
