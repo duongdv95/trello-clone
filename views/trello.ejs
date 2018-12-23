@@ -18,15 +18,28 @@
             </form>
         </div>
         <div id="list-container">
-        <% listsArray.forEach(function(element) { %>
-            <div class="empty" data-list-id=<%=element.id%>>
-                <div class="list-title"><%= element.listName %>
+        <% listsArray.forEach(function(listElement) { %>
+            <div class="empty" data-list-id=<%=listElement.id%>>
+                <div class="list-title"><%= listElement.listName %>
                     <button class="delete-list">x</button>
                 </div>
                 <form class="card-form">
                     <input name="card-list" type="text" placeholder="Add card title..." autocomplete="off"/>
                     <button>Add Card</button>
                 </form>
+                <% cardsArray.forEach(function(cardElement) { %>
+                    <% if (listElement.id == cardElement.listID) { %>
+                        <div class="fill" draggable="true" data-card-id=<%=cardElement.id%>>
+                        <div>
+                            <%= cardElement.cardDescription %>
+                        </div>
+                        <div>
+                            <button class="edit-card-button">edit</button>
+                            <button class="delete-card-button">x</button>
+                        </div>
+                        </div>
+                    <% } %>
+                <% }) %>
             </div>
         <% }) %>
         </div>

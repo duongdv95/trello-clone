@@ -3,8 +3,8 @@ const knexfile                = require("./knexfile.js"),
     
 
 async function createList(listTitle) {
-    const listID = await knex("lists").insert({list_name: listTitle})
-    return listID
+    const listId = await knex("lists").insert({list_name: listTitle})
+    return listId
 }
 
 async function getLists() {
@@ -15,9 +15,22 @@ async function getLists() {
     return listObjects;
 }
 
+async function getCards() {
+    const listsQuery = await knex("cards").select("id", "card", "list_id")
+    const listObjects = listsQuery.map(function(element) {
+        return {cardDescription: element.card, id: element.id, listID: element.list_id}
+    })
+    return listObjects;
+}
+
 async function deleteList(listID) {
     const deleteStatus = await knex("lists").select("list_name").del().where({id: listID})
     return (deleteStatus == 1) ? true : false
 }
 
-module.exports = {createList, getLists, deleteList};
+async function createCard({cardDescription, listID}) {
+    const cardID = await knex("cards").insert({card: cardDescription, list_id: listID})
+    return cardID
+}
+
+module.exports = {createList, getLists, deleteList, createCard, getCards};

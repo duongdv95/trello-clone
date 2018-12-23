@@ -1,6 +1,7 @@
 const cardForm = document.getElementById("card-form-template").innerHTML;
 const listContainer = document.getElementById("list-container");
 const empty = document.getElementsByClassName("empty");
+const fill = document.getElementsByClassName("fill");
 
 const deleteIcon = 'x'
 
@@ -37,14 +38,20 @@ initializeDeleteList();
 initializeDeleteCard();
 initializeEditCard();
 initializeUpdateCard();
-initializeRenderedLists();
+initializeRenderedListsAndCards();
 
-function initializeRenderedLists() {
+function initializeRenderedListsAndCards() {
     if(empty) {
         for(var i = 0; i < empty.length; i++) {
             addDragProperties(empty[i]);
         }
     }    
+    if(fill) {
+        for(var k = 0; k < fill.length; k++) {
+            fill[k].addEventListener("dragstart", dragStart);
+            fill[k].addEventListener("dragend", dragEnd);  
+        }
+    }
 }
 
 function initalizeListForm() {
@@ -62,28 +69,36 @@ function initalizeListForm() {
 }
 
 function initializeCardForm() {
-    document.addEventListener("submit", function(e) {
+    document.addEventListener("submit", async function(e) {
         const listElement = e.target.parentElement;
+        const listID = listElement.dataset.listId;
         e.preventDefault();
         if(e.target && e.target.className == "card-form") {
             var newCardText = e.target.firstElementChild.value;
             if(newCardText) {
-                e.target.firstElementChild.value = "";
-                var newCardElement = `<div class="fill" draggable="true">
-                <div>
-                    ${newCardText}
-                </div>
-                <div>
-                    <button class="edit-card-button">edit</button>
-                    <button class="delete-card-button">${deleteIcon}</button>
-                </div>
-                </div>`;
-                listElement.insertAdjacentHTML("beforeend", newCardElement);
-                listElement.lastElementChild.addEventListener("dragstart", dragStart);
-                listElement.lastElementChild.addEventListener("dragend", dragEnd);
+                const response = await request("POST", `/trello/${listID}`, {newCardText, listID});
+                const responseJSON = await response.json();
+                const cardID = responseJSON.cardID;
+                e.target.firstElementChild.value = ""
+                createCard(cardID, newCardText, listElement)
             }
         }
     })
+}
+
+function createCard(cardID, newCardText, listElement) {
+    var newCardElement = `<div class="fill" draggable="true" data-card-id="${cardID}">
+    <div>
+        ${newCardText}
+    </div>
+    <div>
+        <button class="edit-card-button">edit</button>
+        <button class="delete-card-button">${deleteIcon}</button>
+    </div>
+    </div>`;
+    listElement.insertAdjacentHTML("beforeend", newCardElement);
+    listElement.lastElementChild.addEventListener("dragstart", dragStart);
+    listElement.lastElementChild.addEventListener("dragend", dragEnd);
 }
 
 function initializeEditCard() {
