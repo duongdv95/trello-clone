@@ -34,6 +34,15 @@ app.delete("/trello/:id", async (req, res) => {
     }
 })
 
+app.put("/trello/:listid/:cardid", async (req, res) => {
+    const cardID = req.body.cardID;
+    const listID = req.body.listID;
+    const updatedCard = req.body.updatedCard;
+    const updateStatus = await store.updateCard({cardID, listID, updatedCard})
+    res.status(200).send({updateStatus});
+    
+})
+
 app.post("/trello/:id", async (req, res) => {
     const cardDescription = req.body.newCardText;
     const listID = req.body.listID;

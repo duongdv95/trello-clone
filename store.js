@@ -25,6 +25,13 @@ async function getCards() {
 
 async function deleteList(listID) {
     const deleteStatus = await knex("lists").select("list_name").del().where({id: listID})
+    const cardsQuery = await knex("cards").select("id", "list_id").where({list_id: listID})
+    const cardObjects = cardsQuery.map(function(element) {
+        return {id: element.id, listID: element.list_id}
+    })
+    cardObjects.forEach(async function(element) {
+        await deleteCard({cardID: element.id, listID: element.listID})
+    })
     return (deleteStatus == 1) ? true : false
 }
 
@@ -38,4 +45,11 @@ async function createCard({cardDescription, listID}) {
     return cardID
 }
 
-module.exports = {createList, getLists, deleteList, createCard, getCards, deleteCard};
+async function updateCard({cardID, listID, updatedCard}) {
+    const updateStatus = await knex("cards").where({id: cardID}).update({card: updatedCard, list_id: listID})
+    return updateStatus
+}
+
+module.exports = {createList, getLists, deleteList, 
+                  createCard, getCards, deleteCard, 
+                  updateCard};

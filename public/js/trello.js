@@ -107,6 +107,7 @@ function initializeEditCard() {
             if(!editButton.state()) {
                 var getCardText = e.target.parentElement.previousElementSibling.textContent.trim();
                 var cardElement = e.target.parentElement.previousElementSibling;
+                e.target.parentElement.previousElementSibling.parentElement.setAttribute("draggable", false)
                 editButton.store(e.target);
                 cardElement.innerHTML = `<form class="update-card-form">
                 <input name="card-list" type="text" value=${getCardText} autocomplete="off"/><button>finish</button>
@@ -120,15 +121,23 @@ function initializeEditCard() {
 }
 
 function initializeUpdateCard() {
-    document.addEventListener("submit", function(e) {
+    document.addEventListener("submit", async function(e) {
         e.preventDefault()
         if(e.target && e.target.className == "update-card-form") {
-            var cardElement = e.target.parentElement
+            var cardElement = e.target.parentElement.parentElement
+            var cardID = cardElement.dataset.cardId;
+            var listID = cardElement.parentElement.dataset.listId;
+            var cardText = e.target.parentElement
             var updatedCard = e.target.firstElementChild.value
-            cardElement.innerHTML = updatedCard
-            editButton.state().classList.remove("invisible");
-            editButton.clear();
-            
+            cardText.innerHTML = updatedCard
+            const response = await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID, updatedCard});
+            const responseJSON = await response.json();
+            const updateStatus = responseJSON.updateStatus;
+            if(updateStatus) {
+                editButton.state().classList.remove("invisible");
+                editButton.clear();
+                cardElement.setAttribute("draggable", true)
+            }
         }
     })
 }
