@@ -153,13 +153,21 @@ function initializeDeleteList() {
 }
 
 function initializeDeleteCard() {
-    document.addEventListener("click", function(e) {
+    document.addEventListener("click", async function(e) {
         if(e.target && e.target.className == "delete-card-button"){
             if(editButton.state()) {
                 return
             } else {
                 var getCard = e.target.parentElement.parentElement;
-                getCard.remove();
+                var cardID = getCard.dataset.cardId;
+                var getList = getCard.parentElement;
+                var listID = getList.dataset.listId;
+                const response = await request("DELETE", `/trello/${listID}/${cardID}`, {listID, cardID});
+                const responseJSON = await response.json();
+                const deleteStatus = responseJSON.deleteStatus;
+                if (deleteStatus) {
+                    getCard.remove();
+                }
             }
 
         }

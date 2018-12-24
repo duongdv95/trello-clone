@@ -28,9 +28,14 @@ async function deleteList(listID) {
     return (deleteStatus == 1) ? true : false
 }
 
+async function deleteCard({cardID, listID}) {
+    const deleteStatus = await knex("cards").select("card").del().where({id: cardID, list_id: listID})
+    return (deleteStatus == 1) ? true : false
+}
+
 async function createCard({cardDescription, listID}) {
     const cardID = await knex("cards").insert({card: cardDescription, list_id: listID})
     return cardID
 }
 
-module.exports = {createList, getLists, deleteList, createCard, getCards};
+module.exports = {createList, getLists, deleteList, createCard, getCards, deleteCard};

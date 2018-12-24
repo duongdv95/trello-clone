@@ -41,6 +41,17 @@ app.post("/trello/:id", async (req, res) => {
     res.status(200).send({cardID})
 })
 
+app.delete("/trello/:listid/:cardid", async (req, res) => {
+    const cardID = req.body.cardID;
+    const listID = req.body.listID;
+    const deleteStatus = await store.deleteCard({cardID, listID});
+    if (deleteStatus) {
+        res.status(200).send({deleteStatus});
+    } else {
+        res.status(404).send({deleteStatus});
+    }
+})
+
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("Server has started..")
 });
