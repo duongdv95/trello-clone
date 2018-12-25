@@ -130,7 +130,7 @@ function initializeUpdateCard() {
             var cardText = e.target.parentElement
             var updatedCard = e.target.firstElementChild.value
             cardText.innerHTML = updatedCard
-            const response = await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID, updatedCard});
+            const response = await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID: undefined, updatedCard});
             const responseJSON = await response.json();
             const updateStatus = responseJSON.updateStatus;
             if(updateStatus) {
@@ -206,8 +206,16 @@ function dragStart() {
     setTimeout(() => (this.className = "invisible"), 0);
 }
 
-function dragEnd() {
-    this.className = "fill";
+async function dragEnd() {
+    const cardID = this.dataset.cardId;
+    const listID = this.parentElement.dataset.listId;
+    console.log(cardID, listID);
+    const response = await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID, updatedCard: undefined});
+    const responseJSON = await response.json();
+    const updateStatus = responseJSON.updateStatus;
+    if(updateStatus) {
+            this.className = "fill";
+    }
 }
 
 function dragOver(e) {
