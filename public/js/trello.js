@@ -49,7 +49,9 @@ function initializeRenderedListsAndCards() {
     if(fill) {
         for(var k = 0; k < fill.length; k++) {
             fill[k].addEventListener("dragstart", dragStart);
-            fill[k].addEventListener("dragend", dragEnd);  
+            fill[k].addEventListener("dragend", dragEnd);
+            fill[k].addEventListener("dragleave", sortDragLeave);
+            fill[k].addEventListener("drop", sortDragDrop);
         }
     }
 }
@@ -200,6 +202,8 @@ function addDragProperties(element) {
         element.addEventListener("drop", dragDrop);
 }
 
+
+// CARD drag functions
 function dragStart() {
     element.store(this);
     this.className += " hold";
@@ -209,15 +213,37 @@ function dragStart() {
 async function dragEnd() {
     const cardID = this.dataset.cardId;
     const listID = this.parentElement.dataset.listId;
-    console.log(cardID, listID);
     const response = await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID, updatedCard: undefined});
     const responseJSON = await response.json();
     const updateStatus = responseJSON.updateStatus;
     if(updateStatus) {
-            this.className = "fill";
+        this.className = "fill";
+        reorderCards(element.state(), this)
     }
 }
 
+function reorderCards(selectedCard, targetCard) {
+    const cardsCollection = element.state().parentElement.getElementsByClassName("fill");
+    for(var i = 0; i <= cardsCollection.length; i++) {
+        cardsCollection[i].dataset.index = i
+    }
+}
+
+function sortDragLeave() {
+    this.className = "fill";
+}
+
+function sortDragDrop(e) {
+    if(this.hasAttribute("data-card-id")) {
+        this.className = "fill";
+        e.stopPropagation();
+        const parent = this.parentElement;
+        parent.insertBefore(element.state(),this)
+        
+    }
+}
+
+// LIST drag functions
 function dragOver(e) {
     e.preventDefault();
 }
@@ -231,10 +257,13 @@ function dragLeave() {
     this.className = "empty";
 }
 
-function dragDrop() {
-    this.className = "empty";
-    const currentElementDragged = element.state();
-    this.append(currentElementDragged);
+function dragDrop(e) {
+    if(this.hasAttribute("data-list-id")) {
+        this.className = "empty";
+        const currentElementDragged = element.state();
+        this.append(currentElementDragged);
+        console.log("listid")
+    }
 }
 
 function request (type, path, data) {
@@ -247,4 +276,3 @@ function request (type, path, data) {
         body: JSON.stringify(data),
     })
 }
-

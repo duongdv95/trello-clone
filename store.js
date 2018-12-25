@@ -50,6 +50,10 @@ async function updateCard({cardID, listID, updatedCard}) {
     return updateStatus
 }
 
+// async function updateCardIndex() {
+//     await knex("cards").where({id: cardID}).update({index})
+// }
+
 module.exports = {createList, getLists, deleteList, 
                   createCard, getCards, deleteCard, 
                   updateCard};

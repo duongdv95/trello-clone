@@ -27,9 +27,11 @@
                     <input name="card-list" type="text" placeholder="Add card title..." autocomplete="off"/>
                     <button>Add Card</button>
                 </form>
+                
+                <% var i = 0 %>
                 <% cardsArray.forEach(function(cardElement) { %>
                     <% if (listElement.id == cardElement.listID) { %>
-                        <div class="fill" draggable="true" data-card-id=<%=cardElement.id%>>
+                        <div class="fill" draggable="true" data-card-id=<%=cardElement.id%> data-index=<%=i++%>>
                         <div>
                             <%= cardElement.cardDescription %>
                         </div>
