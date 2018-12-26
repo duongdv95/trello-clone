@@ -17,6 +17,18 @@ const element = (function() {
     };
 })();
 
+const listElement = (function() {
+    var privateElement;
+    return {
+        store: function(element) {
+          privateElement = element;
+        },
+        state: function() {
+          return privateElement;
+        }
+    };
+})();
+
 const editButton = (function() {
     var privateElement;
     return {
@@ -50,6 +62,7 @@ function initializeRenderedListsAndCards() {
         for(var k = 0; k < fill.length; k++) {
             fill[k].addEventListener("dragstart", dragStart);
             fill[k].addEventListener("dragend", dragEnd);
+            fill[k].addEventListener("dragenter", sortDragEnter);
             fill[k].addEventListener("dragleave", sortDragLeave);
             fill[k].addEventListener("drop", sortDragDrop);
         }
@@ -83,6 +96,7 @@ function initializeCardForm() {
                 const cardID = responseJSON.cardID;
                 e.target.firstElementChild.value = ""
                 createCard(cardID, newCardText, listElement)
+                reorderCards(listElement);
             }
         }
     })
@@ -178,6 +192,7 @@ function initializeDeleteCard() {
                 const deleteStatus = responseJSON.deleteStatus;
                 if (deleteStatus) {
                     getCard.remove();
+                    reorderCards(getList);
                 }
             }
 
@@ -206,6 +221,8 @@ function addDragProperties(element) {
 // CARD drag functions
 function dragStart() {
     element.store(this);
+    listElement.store(this.parentElement)
+    console.log(this.parentElement)
     this.className += " hold";
     setTimeout(() => (this.className = "invisible"), 0);
 }
@@ -218,15 +235,28 @@ async function dragEnd() {
     const updateStatus = responseJSON.updateStatus;
     if(updateStatus) {
         this.className = "fill";
-        reorderCards(element.state(), this)
+        reorderCards();
+        reorderCards(listElement.state());
     }
 }
 
-function reorderCards(selectedCard, targetCard) {
-    const cardsCollection = element.state().parentElement.getElementsByClassName("fill");
-    for(var i = 0; i <= cardsCollection.length; i++) {
+async function reorderCards(list) {
+    var card = list || element.state().parentElement;
+    var cardsCollection = card.getElementsByClassName("fill");
+    for(var i = 0; i < cardsCollection.length; i++) {
         cardsCollection[i].dataset.index = i
+        const cardID = cardsCollection[i].dataset.cardId;
+        const listID = cardsCollection[i].parentElement;
+        const response = await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID: undefined, updatedCard: undefined, position: i});
+        const responseJSON = await response.json();
+        const updateStatus = responseJSON.updateStatus;
+        console.log(updateStatus);
     }
+}
+
+function sortDragEnter(e) {
+    e.preventDefault();
+    this.className += " hovered";
 }
 
 function sortDragLeave() {
@@ -239,7 +269,6 @@ function sortDragDrop(e) {
         e.stopPropagation();
         const parent = this.parentElement;
         parent.insertBefore(element.state(),this)
-        
     }
 }
 
@@ -262,7 +291,6 @@ function dragDrop(e) {
         this.className = "empty";
         const currentElementDragged = element.state();
         this.append(currentElementDragged);
-        console.log("listid")
     }
 }
 

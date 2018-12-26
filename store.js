@@ -16,9 +16,9 @@ async function getLists() {
 }
 
 async function getCards() {
-    const listsQuery = await knex("cards").select("id", "card", "list_id")
+    const listsQuery = await knex("cards").select("id", "card", "list_id", "position")
     const listObjects = listsQuery.map(function(element) {
-        return {cardDescription: element.card, id: element.id, listID: element.list_id}
+        return {cardDescription: element.card, id: element.id, listID: element.list_id, position: element.position}
     })
     return listObjects;
 }
@@ -45,8 +45,8 @@ async function createCard({cardDescription, listID}) {
     return cardID
 }
 
-async function updateCard({cardID, listID, updatedCard}) {
-    const updateStatus = await knex("cards").where({id: cardID}).update({card: updatedCard, list_id: listID})
+async function updateCard({cardID, listID, updatedCard, position}) {
+    const updateStatus = await knex("cards").where({id: cardID}).update({card: updatedCard, list_id: listID, position})
     return updateStatus
 }
 

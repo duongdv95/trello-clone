@@ -38,7 +38,8 @@ app.put("/trello/:listid/:cardid", async (req, res) => {
     const cardID = req.body.cardID;
     const listID = req.body.listID;
     const updatedCard = req.body.updatedCard;
-    const updateStatus = await store.updateCard({cardID, listID, updatedCard})
+    const position = req.body.position;
+    const updateStatus = await store.updateCard({cardID, listID, updatedCard, position})
     res.status(200).send({updateStatus});
     
 })
