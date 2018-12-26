@@ -6,14 +6,23 @@
     </head>
     <body>
         <h2>Trello Clone</h2>
-       <h3>
-           <a href="#">Register</a>
-       </h3>
-        
-       <h3>
-           <a href="#">Login</a>
-       </h3>
-        
+
+       <% if(currentUser) { %>
+           <h3>
+               Currently Logged In
+           </h3>
+           <h3>
+               <a href="/logout">Logout</a>
+           </h3>
+       <% } else { %>
+           <h3>
+               <a href="/register">Register</a>
+           </h3>
+            
+           <h3>
+               <a href="/login">Login</a>
+           </h3>
+       <% } %>
         <h3>
             <a href="/trello">Trello</a>
         </h3>

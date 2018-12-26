@@ -1,15 +1,12 @@
 const config = require("./config");
-module.exports = config;
-
-// config =
-// {
-//   client: "*****",
-//   connection: {
-//     host: "*****",
-//     port: "*****",
-//     user: "*****",
-//     password: "*****",
-//     database: "*****"
-//   }
-
-// }
+const envConfig = {
+  client: "mysql",
+  connection: {
+    host: process.env.DBHOST,
+    port: process.env.DBPORT,
+    user: process.env.DBUSER,
+    password: process.env.DBPASSWORD,
+    database: process.env.DBDATABASE
+  }
+}
+module.exports = config || envConfig;

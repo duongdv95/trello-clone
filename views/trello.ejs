@@ -9,6 +9,9 @@
     <body>
         <h3>
             <a href="/">Index</a>
+            <% if (currentUser) { %>
+                <a href="/logout">Logout</a>
+            <% } %>
         </h3>
         <h1>Trello-clone</h1>
         <div>

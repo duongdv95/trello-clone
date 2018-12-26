@@ -222,7 +222,6 @@ function addDragProperties(element) {
 function dragStart() {
     element.store(this);
     listElement.store(this.parentElement)
-    console.log(this.parentElement)
     this.className += " hold";
     setTimeout(() => (this.className = "invisible"), 0);
 }
@@ -247,10 +246,8 @@ async function reorderCards(list) {
         cardsCollection[i].dataset.index = i
         const cardID = cardsCollection[i].dataset.cardId;
         const listID = cardsCollection[i].parentElement;
-        const response = await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID: undefined, updatedCard: undefined, position: i});
-        const responseJSON = await response.json();
-        const updateStatus = responseJSON.updateStatus;
-        console.log(updateStatus);
+        await request("PUT", `/trello/${listID}/${cardID}`, {cardID, listID: undefined, updatedCard: undefined, position: i});
+
     }
 }
 

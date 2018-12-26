@@ -1,14 +1,14 @@
 const knexfile                = require("./knexfile.js"),
-      knex                    = require("knex")(knexfile);
+      knex                    = require("knex")(knexfile),
+      crypto                  = require("crypto");
     
-
-async function createList(listTitle) {
-    const listId = await knex("lists").insert({list_name: listTitle})
+async function createList({listTitle, userID}) {
+    const listId = await knex("lists").insert({list_name: listTitle, user_id: userID})
     return listId
 }
 
-async function getLists() {
-    const listsQuery = await knex("lists").select("list_name", "id")
+async function getLists({userID}) {
+    const listsQuery = await knex("lists").select("list_name", "id").where({user_id: userID})
     const listObjects = listsQuery.map(function(element) {
         return {listName: element.list_name, id: element.id}
     })
@@ -50,10 +50,56 @@ async function updateCard({cardID, listID, updatedCard, position}) {
     return updateStatus
 }
 
-// async function updateCardIndex() {
-//     await knex("cards").where({id: cardID}).update({index})
-// }
+async function checkDuplicateUsername ({username}) {
+    const [userData] = await knex("users").select("username").where({username});
+    return userData ? {userFound: userData.username} : {userFound: null};
+}
+
+async function authenticateUser({username, password}) {
+    console.log(`Authenticating user ${username}`);
+    const [user] = await knex("users").where({username});
+    if(!user) return {success: false, user: null}
+    const {hash} = saltHashPassword({
+        password, 
+        salt: user.salt
+        })
+    return {success: hash === user.encrypted_password, user: username}
+}
+
+async function registerUser({username, password}) {
+    console.log(`Add user ${username} with password ${password}`)
+    const {salt, hash} = saltHashPassword({password});
+    return await knex("users").insert({username: username, encrypted_password: hash, salt: salt})
+}
+
+function saltHashPassword ({
+    password,
+    salt = randomString()
+}) {
+
+    const hash = crypto
+        .createHmac("sha512", salt)
+        .update(password)
+        
+    return {
+        salt: salt,
+        hash: hash.digest("hex")
+    }
+}
+
+function randomString () {
+    return crypto.randomBytes(4).toString("hex");
+}
+
+function getUserID (user) {
+    return knex("users")
+    .select("id")
+    .where({
+        username:user
+    })
+}
 
 module.exports = {createList, getLists, deleteList, 
                   createCard, getCards, deleteCard, 
-                  updateCard};
+                  updateCard, registerUser, authenticateUser,
+                  checkDuplicateUsername, getUserID};
